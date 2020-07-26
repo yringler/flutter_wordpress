@@ -246,6 +246,9 @@ class WordPress {
   /// 
   /// [fetchAll] will make as many API requests as is needed to get all posts.
   /// This may take a while.
+  /// 
+  /// Specify any custom fields in [customFieldNames]. They will be loaded into
+  /// [Post.customFields]
   ///
   /// In case of an error, a [WordPressError] object is thrown.
   async.Future<List<Post>> fetchPosts({
@@ -259,7 +262,8 @@ class WordPress {
     bool fetchFeaturedMedia = false,
     bool fetchAttachments = false,
     String postType = "posts",
-    bool fetchAll = false
+    bool fetchAll = false,
+    Set<String> customFieldNames = null
   }) async {
     if (fetchAll) {
       postParams = postParams.copyWith(perPage: 100);
@@ -276,9 +280,16 @@ class WordPress {
       List<Post> posts = new List();
       final list = json.decode(response.body);
 
-      for (final post in list) {
+      for (final Map<String, dynamic> post in list) {
+        Map<String, dynamic> customFields;
+
+        if (customFieldNames?.isNotEmpty ?? false) {
+          customFields = Map.fromEntries(
+              customFieldNames.map((key) => MapEntry(key, post[key])));
+        }
+
         posts.add(await _postBuilder(
-          post: Post.fromJson(post),
+          post: Post.fromJson(post)..customFields = customFields,
           setAuthor: fetchAuthor,
           setComments: fetchComments,
           orderComments: orderComments,

@@ -100,6 +100,9 @@ class Post {
   /// The featured Media of the post.
   Media featuredMedia;
 
+  /// Custom fields on a post.
+  Map<String, dynamic> customFields;
+
   Post({
     this.date,
     this.dateGmt,
@@ -119,6 +122,7 @@ class Post {
     this.format = PostFormat.standard,
     this.categoryIDs,
     this.tagIDs,
+    this.customFields,
   })  : this.title = new Title(rendered: title),
         this.featuredMedia = new Media(sourceUrl: featuredMedia),
         this.content = new Content(rendered: content),
@@ -208,6 +212,12 @@ class Post {
     if (this.categoryIDs != null)
       data['categories'] = listToUrlString(this.categoryIDs);
     if (this.tagIDs != null) data['tags'] = listToUrlString(this.tagIDs);
+    if (customFields != null) {
+      for (final key in customFields.keys) {
+        data[key] = customFields[key]; 
+      }
+    } 
+
     return data;
   }
 
