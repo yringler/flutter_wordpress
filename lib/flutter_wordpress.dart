@@ -315,6 +315,8 @@ class WordPress {
               fetchTags: fetchTags,
               fetchFeaturedMedia: fetchFeaturedMedia,
               fetchAttachments: fetchAttachments,
+              customFieldNames: customFieldNames,
+              postType: postType
             ));
           }
         }
